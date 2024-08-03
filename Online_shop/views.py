@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CommentModelForm, OrderModelForm
+from .forms import CommentModelForm, OrderModelForm, ProductModelForm
 from .models import Product, Comment, Category
 from django.contrib import messages
 from django.db.models import Avg
 from typing import Optional
+
 
 def product_list(request):
     products = Product.objects.all().order_by('-created_at')
@@ -12,13 +13,14 @@ def product_list(request):
         'products': products,
         'categories': categories,
     }
-    return render(request, 'Online_shop/product_list.html', context)
+    return render(request, 'online_shop/product_list.html', context)
+
 
 def cheap(request):
     categories = Category.objects.all()
     products = Product.objects.order_by('price')
     context = {'categories': categories, 'products': products}
-    return render(request, 'Online_shop/home.html', context)
+    return render(request, 'online_shop/home.html', context)
 
 
 def home(request, _id: Optional[int] = None):
@@ -28,7 +30,8 @@ def home(request, _id: Optional[int] = None):
         products = Product.objects.all().order_by('-created_at')
     categories = Category.objects.all()
     context = {'products': products, 'categories': categories}
-    return render(request, 'Online_shop/home.html', context)
+    return render(request, 'online_shop/home.html', context)
+
 
 def detail(request, _id):
     product = get_object_or_404(Product, pk=_id)
@@ -58,7 +61,8 @@ def detail(request, _id):
                 messages.success(request, 'Your order has been submitted!')
                 return redirect('detail', _id=_id)
             else:
-                messages.error(request, 'Not enough stock available.')
+                messages.error(request, 'Not enough stock availabl'
+                                        'e.')
     context = {
         'new_comment': new_comment,
         'new_order': new_order,
@@ -67,28 +71,69 @@ def detail(request, _id):
         'products': related_products,
         'product': product
     }
-    return render(request, 'Online_shop/detail.html', context)
+    return render(request, 'online_shop/detail.html', context)
+
 
 def expensive(request):
     categories = Category.objects.all()
     products = Product.objects.order_by('-price')
     context = {'categories': categories, 'products': products}
-    return render(request, 'Online_shop/home.html', context)
+    return render(request, 'online_shop/home.html', context)
 
 
 def ratings(request):
-
     products = Product.objects.annotate(average_rating=Avg('rating')).order_by('-average_rating')
     context = {'products': products}
-    return render(request, 'Online_shop/ratings.html', context)
+    return render(request, 'online_shop/ratings.html', context)
+
 
 def about(request):
-    return render(request, 'Online_shop/about.html')
+    return render(request, 'online_shop/about.html')
+
 
 def product_comment(request, _id):
     product = get_object_or_404(Product, id=_id)
-    return render(request, 'Online_shop/detail.html', {'product': product})
+    return render(request, 'online_shop/detail.html', {'product': product})
+
 
 def product_order(request, _id):
     product = get_object_or_404(Product, id=_id)
-    return render(request, 'Online_shop/detail.html', {'product': product})
+    return render(request, 'online_shop/detail.html', {'product': product})
+
+
+def add_product(request):
+    form = ProductModelForm()
+    if request.method == 'POST':
+        form = ProductModelForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('product_list')
+
+    context = {
+        'form': form
+    }
+    return render(request, 'online_shop/add_product.html', context)
+
+
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == 'POST':
+        product.delete()
+        return redirect('home')
+    return redirect('home')
+
+
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    form = ProductModelForm(instance=product)
+    if request.method == 'POST':
+        form = ProductModelForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('detail', product_id)
+    context = {
+        'form': form,
+        'product': product
+
+    }
+    return render(request, 'online_shop/edit_product.html', context)

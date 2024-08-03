@@ -8,6 +8,9 @@
     <h1>{{ product.name }}</h1>
     <p>{{ product.description }}</p>
     <p>Price: {{ product.price }}</p>
+
     <a href="{% url 'product_order' product.id %}">Order</a>
+    <a href="{% url 'edit_product' product.id %}">Edit</a>
+    <a href="{% url 'delete_product' product.id %}">Delete</a>
 </body>
 </html>
