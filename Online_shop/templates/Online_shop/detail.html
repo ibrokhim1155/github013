@@ -23,23 +23,27 @@
                 class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         {% for category in categories %}
-                            <li><a class="dropdown-item" href="{% url 'category' category.id %}">{{ category.title }}</a></li>
+                            <li><a class="dropdown-item"
+                                   href="{% url 'category' category.id %}">{{ category.title }}</a></li>
                             {% if not forloop.last %}
-                                <li><hr class="dropdown-divider"/></li>
+                                <li>
+                                    <hr class="dropdown-divider"/>
+                                </li>
                             {% endif %}
                         {% endfor %}
                     </ul>
                 </li>
             </ul>
             <form class="d-flex">
-                <input type="text" class="form-control">
+                <input  name="search" aria-label="Search" class="form-control">
                 <button class="btn btn-outline-dark" type="submit">
                     <i class="bi-search-fill me-1"></i> Search
                 </button>
@@ -68,15 +72,15 @@
                 </div>
                 <form method="post" action="{% url 'delete_product' product.id %}">
                     {% csrf_token %}
-                <div class="form-group mb-3">
-                    <button type="submit" class="btn btn-outline-dark">Delete</button>
-                </div>
+                    <div class="form-group mb-3">
+                        <button type="submit" class="btn btn-outline-dark">Delete</button>
+                    </div>
                 </form>
-                <form method="post" action="{% url 'edit_product' product.id %}">
+                <form action="{% url 'edit_product' product.id %}">
                     {% csrf_token %}
-                <div class="form-group mb-3">
-                    <button type="submit" class="btn btn-outline-dark">Edit</button>
-                </div>
+                    <div class="form-group mb-3">
+                        <button type="submit" class="btn btn-outline-dark">Edit</button>
+                    </div>
                 </form>
                 <h1 class="display-5 fw-bolder">{{ product.name }}</h1>
                 <div class="fs-5 mb-5">
@@ -107,15 +111,18 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="username">Your name</label>
-                            <input type="text" id="username" class="form-control" name="username" placeholder="Your name" value="{{ order_form.username.value }}">
+                            <input type="text" id="username" class="form-control" name="username"
+                                   placeholder="Your name" value="{{ order_form.username.value }}">
                         </div>
                         <div class="form-group mb-3">
                             <label for="phone">Your phone</label>
-                            <input type="text" id="phone" class="form-control" name="phone" placeholder="Your phone number" value="{{ order_form.phone.value }}">
+                            <input type="text" id="phone" class="form-control" name="phone"
+                                   placeholder="Your phone number" value="{{ order_form.phone.value }}">
                         </div>
                         <div class="form-group mb-3">
                             <label for="quantity">Quantity</label>
-                            <input type="number" id="quantity" class="form-control" name="quantity" placeholder="Quantity" value="{{ order_form.quantity.value }}">
+                            <input type="number" id="quantity" class="form-control" name="quantity"
+                                   placeholder="Quantity" value="{{ order_form.quantity.value }}">
                         </div>
                         <div class="form-group mb-3">
                             <button type="submit" class="btn btn-success">Send</button>
@@ -168,13 +175,17 @@
         <form method="post" action="{% url 'product_comment' product.id %}">
             {% csrf_token %}
             <div class="form-group mb-3">
-                <input type="text" class="form-control" name="name" placeholder="Your name" value="{{ comment_form.name.value }}">
+                <input type="text" class="form-control" name="name" placeholder="Your name"
+                       value="{{ comment_form.name.value }}">
             </div>
             <div class="form-group mb-3">
-                <input type="email" class="form-control" name="email" placeholder="Your email" value="{{ comment_form.email.value }}">
+                    <input type="email" class="form-control" name="email" placeholder="Your email"
+                           value="{{ comment_form.email.value }}">
+
             </div>
             <div class="form-group mb-3">
-                <textarea name="comment" id="" class="form-control" cols="30" rows="10" placeholder="Comment">{{ comment_form.comment.value }}</textarea>
+                <textarea name="comment" id="" class="form-control" cols="30" rows="10"
+                          placeholder="Comment">{{ comment_form.comment.value }}</textarea>
             </div>
             <div class="form-group mb-3">
                 <button type="submit" class="btn btn-success">Send</button>
@@ -188,34 +199,39 @@
     <div class="container px-4 px-lg-5 mt-5">
         <h2 class="fw-bolder mb-4">Related products</h2>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            {% for related_product in products %}
+            {% for product in products %}
                 <div class="col mb-5">
                     <div class="card h-100">
-                        {% if related_product.discount > 0 %}
-                            <div class="badge bg-warning text-white position-absolute" style="top: 0.5rem; left: 0.5rem">Sale</div>
+                        {% if product.discount > 0 %}
+                            <div class="badge bg-warning text-white position-absolute"
+                                 style="top: 0.5rem; left: 0.5rem">Sale
+                            </div>
                         {% endif %}
-                        <img class="card-img-top" src="{{ related_product.image.url }}" alt="..."/>
+                        <img class="card-img-top" src="{{ product.image.url }}" alt="..."/>
                         <div class="card-body p-4">
                             <div class="text-center">
-                                <h5 class="fw-bolder">{{ related_product.name }}</h5>
-                                {% if related_product.discount > 0 %}
-                                    <span class="text-muted text-decoration-line-through">${{ related_product.price }}</span>
-                                    <span>${{ related_product.discounted_price }}</span>
-                                    <span>%{{ related_product.discount }}</span>
+                                <h5 class="fw-bolder">{{ product.name }}</h5>
+                                {% if product.discount > 0 %}
+                                    <span class="text-muted text-decoration-line-through">${{ product.price }}</span>
+                                    <span>${{ product.discounted_price }}</span>
+                                    <span>%{{ product.discount }}</span>
                                 {% else %}
-                                    ${{ related_product.price }}
+                                    ${{ product.price }}
                                 {% endif %}
                                 <br>
                                 <div class="d-flex justify-content-center small text-warning mb-2">
-                                    {% for _ in related_product.rating %}
-                                        <div class="bi-star-fill"></div>
-                                    {% endfor %}
+                                    {% with ''|center:product.rating as ratings %}
+                                        {% for rating in ratings %}
+                                            <div class="bi-star-fill"></div>
+                                        {% endfor %}
+                                    {% endwith %}
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                             <div class="text-center">
-                                <a class="btn btn-outline-dark mt-auto" href="{% url 'product_detail' related_product.id %}">View Product</a>
+                                <a class="btn btn-outline-dark mt-auto" href="{% url 'detail' product.id %}">View
+                                    Product</a>
                             </div>
                         </div>
                     </div>
