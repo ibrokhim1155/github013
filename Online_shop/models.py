@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-
+from django.utils.text import slugify
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -11,10 +11,16 @@ class BaseModel(models.Model):
 
 
 class Category(models.Model):
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(null=True, blank=True)
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(Category, self).save(*args, **kwargs)
 
 
 class Product(BaseModel):
@@ -35,26 +41,19 @@ class Product(BaseModel):
     discount = models.PositiveSmallIntegerField(default=0)
     image = models.ImageField(upload_to='images', null=True, blank=True)
 
-    # created_at = models.DateTimeField(auto_now_add=True)
-    # updated_at = models.DateTimeField(auto_now=True)
-
     @property
     def discount_price(self):
         if self.discount > 0:
             return self.price * (1 - self.discount / 100)
         return self.price
 
+    def get_image_url(self):
+        if self.image:
+            return self.image.url
+        return ''
+
     def __str__(self):
         return self.name
-
-
-#
-# class ProductImage(BaseModel):
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-#     image = models.ImageField(upload_to='product_images/')
-#
-#     def __str__(self):
-#         return f'{self.product.name} - Image'
 
 
 class Comment(BaseModel):
@@ -65,7 +64,7 @@ class Comment(BaseModel):
     is_provide = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{self.name} , {self.comment} , {self.created_at} , {self.updated_at}'
+        return f'{self.name} , {self.comment[:20]} , {self.created_at}'
 
 
 class Order(BaseModel):

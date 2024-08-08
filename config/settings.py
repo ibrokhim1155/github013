@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,12 +54,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
-# config/settings.py
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,7 +73,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
+
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
@@ -113,7 +113,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-import os
 
 
 # Static files (CSS, JavaScript, Images)
@@ -128,3 +127,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Admin Panel",
+    "site_header": "Sizning Adminingiz",
+    "site_brand": "My shop",
+    "welcome_sign": "Xush kelibsiz!",
+    "copyright": "2024, Sizning Kompaniyangiz",
+    "topmenu_links": [
+        {"name": "Bosh sahifa", "url": "/", "permissions": ["auth.view_user"]},
+        {"name": "Aloqa", "url": "/contact/", "permissions": ["auth.view_user"]},
+    ],
+
+}
