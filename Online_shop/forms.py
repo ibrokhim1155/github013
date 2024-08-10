@@ -2,6 +2,9 @@ from django import forms
 
 from .models import Comment, Order, Product
 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
 
 class CommentModelForm(forms.ModelForm):
     class Meta:
@@ -25,3 +28,24 @@ class ProductModelForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = '__all__'
+
+
+class SignUpForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')
+
+
+class AddProductModelForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+
+class UpdateProductModelForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = '__all__'
+
